@@ -4,3 +4,6 @@
 [submodule "libopencm3"]
 	path = libopencm3
 	url = https://github.com/libopencm3/libopencm3
+[submodule "pqm4/mupq/pqclean"]
+	path = pqm4/mupq/pqclean
+	url = https://github.com/pqclean/pqclean
