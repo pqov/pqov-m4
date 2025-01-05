@@ -1,6 +1,7 @@
 DEVICE=stm32l4r5zi
 
 EXCLUDED_SCHEMES = \
+  crypto_sign/ov-Is% \
 	mupq/pqclean/crypto_kem/mceliece% \
   mupq/crypto_sign/falcon-1024-tree% \
   mupq/pqclean/crypto_sign/rainbow% \
