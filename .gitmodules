@@ -1,3 +1,6 @@
 [submodule "pqov"]
 	path = pqov
 	url = https://github.com/pqov/pqov
+[submodule "libopencm3"]
+	path = libopencm3
+	url = https://github.com/libopencm3/libopencm3
