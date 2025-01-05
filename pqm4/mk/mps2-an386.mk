@@ -9,6 +9,9 @@ SIZE := $(CROSS_PREFIX)-size
 
 LDSCRIPT = obj/ldscript.ld
 
+EXCLUDED_SCHEMES = \
+  mupq/pqclean/%
+
 ARCH_FLAGS += -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 CFLAGS += \
@@ -51,3 +54,4 @@ LINKDEPS += $(LDSCRIPT) $(LIBDEPS)
 ENABLE_QEMU_TESTS = 1
 QEMU = qemu-system-arm
 QEMUFLAGS = -M mps2-an386 -nographic -semihosting
+
