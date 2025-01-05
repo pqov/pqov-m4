@@ -51,7 +51,6 @@ uint8_t canary = 0x42;
 #ifdef KEYS_IN_FLASH
 const unsigned char *sk;
 const unsigned char *pk;
-unsigned char pk_seed[32];
 #else
 unsigned char sk[MUPQ_CRYPTO_SECRETKEYBYTES];
 unsigned char pk[MUPQ_CRYPTO_PUBLICKEYBYTES];
@@ -79,13 +78,13 @@ unsigned int stack_key_gen, stack_sign, stack_verify;
 #ifdef KEYS_IN_FLASH
 static void do_keypair_sk(){
   unsigned char sktmp[MUPQ_CRYPTO_SECRETKEYBYTES];
-  MUPQ_crypto_sign_keypair_sk(sktmp, pk_seed);
+  MUPQ_crypto_sign_keypair_sk(sktmp);
   write_sk_to_flash(sktmp);
 }
 
 static void do_keypair_pk(){
   unsigned char pktmp[MUPQ_CRYPTO_PUBLICKEYBYTES];
-  MUPQ_crypto_sign_keypair_pk(pktmp, sk, pk_seed);
+  MUPQ_crypto_sign_keypair_pk(pktmp, sk);
   write_pk_to_flash(pktmp);
 }
 #endif

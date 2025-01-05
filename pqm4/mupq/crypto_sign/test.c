@@ -34,15 +34,15 @@
 #define MUPQ_crypto_sign_verify NAMESPACE(crypto_sign_verify)
 
 #ifdef KEYS_IN_FLASH
-static void do_keypair_sk(unsigned char pk_seed[32]){
+static void do_keypair_sk(void){
   unsigned char sktmp[MUPQ_CRYPTO_SECRETKEYBYTES];
-  MUPQ_crypto_sign_keypair_sk(sktmp, pk_seed);
+  MUPQ_crypto_sign_keypair_sk(sktmp);
   write_sk_to_flash(sktmp);
 }
 
-static void do_keypair_pk(const unsigned char *sk, unsigned char pk_seed[32]){
+static void do_keypair_pk(const unsigned char *sk){
   unsigned char pktmp[MUPQ_CRYPTO_PUBLICKEYBYTES];
-  MUPQ_crypto_sign_keypair_pk(pktmp, sk, pk_seed);
+  MUPQ_crypto_sign_keypair_pk(pktmp, sk);
   write_pk_to_flash(pktmp);
 }
 #endif
@@ -52,7 +52,6 @@ static int test_sign(void)
     #ifdef KEYS_IN_FLASH
     const unsigned char *sk = get_sk_flash();
     const unsigned char *pk = get_pk_flash();
-    unsigned char pk_seed[32];
     #else
     unsigned char sk[MUPQ_CRYPTO_SECRETKEYBYTES];
     unsigned char pk[MUPQ_CRYPTO_PUBLICKEYBYTES];
@@ -68,8 +67,8 @@ static int test_sign(void)
     int i;
     for (i = 0; i < NTESTS; i++) {
         #ifdef KEYS_IN_FLASH
-        do_keypair_sk(pk_seed);
-        do_keypair_pk(sk, pk_seed);
+        do_keypair_sk();
+        do_keypair_pk(sk);
         #else
         MUPQ_crypto_sign_keypair(pk, sk);
         #endif
@@ -99,7 +98,6 @@ static int test_wrong_pk(void)
     #ifdef KEYS_IN_FLASH
     const unsigned char *sk = get_sk_flash();
     const unsigned char *pk = get_pk_flash();
-    unsigned char pk_seed[32];
     #else
     unsigned char sk[MUPQ_CRYPTO_SECRETKEYBYTES];
     unsigned char pk[MUPQ_CRYPTO_PUBLICKEYBYTES];
@@ -114,8 +112,8 @@ static int test_wrong_pk(void)
 
     for (i = 0; i < NTESTS; i++) {
         #ifdef KEYS_IN_FLASH
-        do_keypair_sk(pk_seed);
-        do_keypair_pk(sk, pk_seed);
+        do_keypair_sk();
+        do_keypair_pk(sk);
         #else
         MUPQ_crypto_sign_keypair(pk, sk);
         #endif
@@ -127,8 +125,8 @@ static int test_wrong_pk(void)
         hal_send_str("crypto_sign DONE.\n");
 
         #ifdef KEYS_IN_FLASH
-        do_keypair_sk(pk_seed);
-        do_keypair_pk(sk, pk_seed);
+        do_keypair_sk();
+        do_keypair_pk(sk);
         #else
         MUPQ_crypto_sign_keypair(pk, sk);
         #endif

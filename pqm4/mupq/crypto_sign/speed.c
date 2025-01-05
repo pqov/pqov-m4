@@ -36,20 +36,20 @@
 #define printcycles(S, U) send_unsignedll((S), (U))
 
 #ifdef KEYS_IN_FLASH
-static uint64_t do_keypair_sk(unsigned char pk_seed[32]){
+static uint64_t do_keypair_sk(void){
   unsigned char sktmp[MUPQ_CRYPTO_SECRETKEYBYTES];
   uint64_t t0,t1;
-  MUPQ_crypto_sign_keypair_sk(sktmp, pk_seed);
+  MUPQ_crypto_sign_keypair_sk(sktmp);
   t0 = hal_get_time();
   write_sk_to_flash(sktmp);
   t1 = hal_get_time();
   return t1-t0;
 }
 
-static uint64_t do_keypair_pk(const unsigned char *sk, unsigned char pk_seed[32]){
+static uint64_t do_keypair_pk(const unsigned char *sk){
   unsigned char pktmp[MUPQ_CRYPTO_PUBLICKEYBYTES];
   uint64_t t0,t1;
-  MUPQ_crypto_sign_keypair_pk(pktmp, sk, pk_seed);
+  MUPQ_crypto_sign_keypair_pk(pktmp, sk);
   t0 = hal_get_time();
   write_pk_to_flash(pktmp);
   t1 = hal_get_time();
@@ -62,7 +62,6 @@ int main(void)
   #ifdef KEYS_IN_FLASH
   const unsigned char *sk = get_sk_flash();
   const unsigned char *pk = get_pk_flash();
-  unsigned char pk_seed[32];
   #else
   unsigned char sk[MUPQ_CRYPTO_SECRETKEYBYTES];
   unsigned char pk[MUPQ_CRYPTO_PUBLICKEYBYTES];
@@ -81,8 +80,8 @@ int main(void)
   // Key-pair generation
   t0 = hal_get_time();
   #ifdef KEYS_IN_FLASH
-  uint64_t skflashcycles = do_keypair_sk(pk_seed);
-  uint64_t pkflashcycles = do_keypair_pk(sk, pk_seed);
+  uint64_t skflashcycles = do_keypair_sk();
+  uint64_t pkflashcycles = do_keypair_pk(sk);
   t1 = hal_get_time();
   printcycles("keypair cycles:", t1-t0);
   printcycles("flashing cycles:", skflashcycles+pkflashcycles);
