@@ -2,9 +2,9 @@ name: mps2-an386 build
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 jobs:
   build-all:
     runs-on: ubuntu-latest
