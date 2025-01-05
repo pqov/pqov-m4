@@ -98,10 +98,10 @@ LDFLAGS += \
 
 LDLIBS += -lm
 
-HOST_CPPFLAGS += -DMUPQ_NAMESPACE=$(MUPQ_NAMESPACE)
+HOST_CPPFLAGS += -DMUPQ_NAMESPACE=$(MUPQ_NAMESPACE) -DPQM4
 
 HOST_CFLAGS += \
-	-O2 -g3 \
+	-O2 -g2 \
 	-I$(SRCDIR)/mupq/common \
 	-Wall -Wextra -Wshadow \
 	-MMD \

@@ -1,0 +1,7 @@
+**/__pycache__
+bin/
+bin-host/
+elf/
+obj-host/
+obj/
+venv/
