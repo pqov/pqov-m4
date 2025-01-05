@@ -14,7 +14,9 @@ jobs:
         with:
           submodules: recursive
       - name: Install qemu-system
-        run: sudo apt-get install -y qemu-system
+        run: |
+          sudo apt update
+          sudo apt install -y qemu-system
       - name: Install dependencies
         run:  pip3 install -r requirements.txt
       - name: Install Toolchain
