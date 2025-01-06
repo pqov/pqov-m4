@@ -203,9 +203,9 @@ void ov_pkc_calculate_F_from_Q_m4f( sk_t * Fs)
 {
   // TODO: add errors if parameters change
   #ifdef _USE_GF16
-    gf16trimat_2trimat_madd_m4f_96_48_64_32( Fs->L , Fs->P1 , Fs->t1);
+    gf16trimat_2trimat_madd_m4f_96_48_64_32( Fs->S , Fs->P1 , Fs->O);
   #else
-    gf256trimat_2trimat_madd_m4f_68_68_44_44( Fs->L , Fs->P1 , Fs->t1);
+    gf256trimat_2trimat_madd_m4f_68_68_44_44( Fs->S , Fs->P1 , Fs->O);
   #endif
 }
 #endif
