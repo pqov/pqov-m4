@@ -9,7 +9,7 @@
 
 // -----------------------------------------------------------------------------
 
-//#define _4ROUND_AES_
+#define _4ROUND_AES_
 
 #if (!defined(_OV16_160_64))&&(!defined(_OV256_112_44))&&(!defined(_OV256_184_72))&&(!defined(_OV256_244_96))
 
@@ -21,8 +21,8 @@
 
 #if (!defined(_OV_CLASSIC))&&(!defined(_OV_PKC))&&(!defined(_OV_PKC_SKC))
 //#define _OV_CLASSIC
-//#define _OV_PKC
-#define _OV_PKC_SKC
+#define _OV_PKC
+//#define _OV_PKC_SKC
 #endif
 
 
