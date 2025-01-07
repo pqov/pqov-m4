@@ -267,13 +267,24 @@ gf16mat_gauss_elim_row_echolen_m4f_64:
         // First: make sure that pivot in this row is not zero, by adding the other rows in case it is zero
         add.w jj, ii, #1
 
-        # add at most 15 rows
+        .if 0
+        // this is a performance optimization resulting in a 2^-58 chance to
+        // wrongly reject a set of vinegar variables.
+        // We disable this trick by default as it it is incompatible with formal verification.
+        // See `Reducing the number of conditional additions` of
+        // https://eprint.iacr.org/2023/059
+
+        // add at most 15 rows
         add.w aj, ii, #16
         cmp.w aj, #64
         it ge
         movge.w aj, #64
         nop.n
         vmov.w stopjj, aj
+        .else
+        mov.w aj, #64
+        vmov.w stopjj, aj
+        .endif
 
         add.w aj, ai, #36
         inner:
