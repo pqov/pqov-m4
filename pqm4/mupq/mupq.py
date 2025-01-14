@@ -424,6 +424,7 @@ class Converter(object):
         return data
 
     def _stats(self, data):
+        data = list(filter(lambda d: d is not None, data))
         return (int(statistics.mean(data)), min(data), max(data))
 
     def _parseData(self, fileContents, benchmark, type_):
@@ -448,7 +449,10 @@ class Converter(object):
                 decverifytotal = int(parts[parts.index("verify cycles:")+1])
                 decverify      = int(parts[parts.index("verify hash cycles:")+1])/decverifytotal
         elif benchmark == 'speed':
-            keygen    = int(parts[parts.index("keypair cycles:")+1])
+            if "keypair cycles:" in parts:
+                keygen = int(parts[parts.index("keypair cycles:")+1])
+            else:
+                keygen = None
             if type_ == "crypto_kem":
                 encsign    = int(parts[parts.index("encaps cycles:")+1])
                 decverify    = int(parts[parts.index("decaps cycles:")+1])
