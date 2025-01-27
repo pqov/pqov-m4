@@ -3,6 +3,7 @@
 #include "hal.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #ifdef KEYS_IN_FLASH
 #include "hal-flash.h"

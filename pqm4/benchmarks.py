@@ -10,9 +10,9 @@ if __name__ == "__main__":
                                                 '--nospeed',
                                                 '--nohashing',
                                                 '--nosize']]
-        if "--nostack" not in rest:
-            test = mupq.StackBenchmark(settings, platform)
-            test.test_all(schemes)
+        #if "--nostack" not in rest:
+        #    test = mupq.StackBenchmark(settings, platform)
+        #    test.test_all(schemes)
 
         if "--nospeed" not in rest:
             test = mupq.SpeedBenchmark(settings, platform)

@@ -521,27 +521,6 @@ static void aes_ctr4x(unsigned char out[64], uint32_t ivw[16], const uint64_t *s
     inc4_be(ivw + 15);
 }
 
-
-static void aes_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const uint64_t *rkeys, unsigned int nrounds) {
-    uint32_t blocks[16];
-    unsigned char t[64];
-
-    while (nblocks >= 4) {
-        br_range_dec32le(blocks, 16, in);
-        aes_ecb4x(out, blocks, rkeys, nrounds);
-        nblocks -= 4;
-        in += 64;
-        out += 64;
-    }
-
-    if (nblocks) {
-        br_range_dec32le(blocks, nblocks * 4, in);
-        aes_ecb4x(t, blocks, rkeys, nrounds);
-        memcpy(out, t, nblocks * 16);
-    }
-}
-
-
 static void aes_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, uint32_t cc, const uint64_t *rkeys, unsigned int nrounds) {
     uint32_t ivw[16];
     size_t i;
