@@ -1,4 +1,37 @@
-# Benchmarks
+# UOV
+
+This repository contains a Cortex-M4 implementation of the UOV NIST submission. 
+It is compatible with the Round-2 version of the specification.
+It based on the implementation described in the paper **Oil and Vinegar: Modern Parameters and Implementations** available [here](https://eprint.iacr.org/2023/059), but testvectors have changed in Round-2.
+
+This repository is based on [pqm4](https://github.com/mupq/pqm4) and you will find the usual `test.py`, `testvectors.py`, and `benchmarks.py` scripts.  
+Please follow the installation steps in pqm4. 
+We target the [NUCLEO-L4R5ZI board](https://www.st.com/en/evaluation-tools/nucleo-l476rg.html), but tests can also be performed using qemu.
+
+
+```
+git clone --recurse-submodules https://github.com/pqov/pqov-m4/
+cd pqov-m4
+```
+
+## Running tests and benchmarks
+```
+# run tests using qemu
+./test.py -p mps2-an386
+# run testvectors using qemu
+./testvectors.py -p mps2-an386
+
+# run tests on the board
+./test.py -p nucleo-l4r5zi -u /dev/ttyACM0
+# run testvectors on the board
+./testvectors.py -p nucleo-l4r5zi -u /dev/ttyACM0
+# run benchmarks on the board
+./benchmarks.py -p nucleo-l4r5zi -u /dev/ttyACM0 -i 10
+# print benchmarks
+./convert_benchmarks.py md
+```
+
+## Benchmarks
 
 | scheme | implementation | key generation [cycles] | sign [cycles] | verify [cycles] |
 | ------ | -------------- | ----------------------- | ------------- | --------------- |
