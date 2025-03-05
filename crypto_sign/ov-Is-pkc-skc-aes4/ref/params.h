@@ -127,6 +127,8 @@
 #define OV_PUBLICKEYBYTES OV_PK_COMPRESSED_BYTES
 #endif
 
+#define PQOV_NAMESPACE(s) s
+
 
 
 
