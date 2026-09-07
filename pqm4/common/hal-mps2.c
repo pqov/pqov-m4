@@ -59,13 +59,18 @@ static inline void uart_putc(int c)
   CMSDK_UART0->DATA = c & 0xFFu;
 }
 
-void hal_send_str(const char* in)
+void hal_send_chunk(const char* in)
 {
   const char* cur = in;
   while (*cur) {
     uart_putc(*cur);
     cur += 1;
   }
+}
+
+void hal_send_str(const char* in)
+{
+  hal_send_chunk(in);
   uart_putc('\n');
 }
 

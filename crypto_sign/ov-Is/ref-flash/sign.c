@@ -63,7 +63,15 @@ crypto_sign_keypair_sk(unsigned char *sk)
 static void expand_sk_into_flash(csk_t *rsk)
 {
     sk_t _sk;
-    expand_sk(&_sk, rsk->sk_seed);
+    // expand_sk() is not exported in _OV_PKC_SKC builds, where sk->S is meant to
+    // stay implicit.  Keygen needs the materialised form to derive the pk from,
+    // so build it from the two pieces expand_sk() is made of.
+    expand_sk_implicit_s(&_sk, rsk->sk_seed);
+    #if defined(_BLAS_M4F_)
+    ov_pkc_calculate_F_from_Q(&_sk);
+    #else
+    calculate_F2(_sk.S, _sk.P1, _sk.S, _sk.O);
+    #endif
     write_tmp_to_flash((unsigned char *)&_sk);
 }
 #endif

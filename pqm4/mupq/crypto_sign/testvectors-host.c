@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define MAXMLEN 2048
+#define MAXMLEN MUPQ_MAXMLEN
 
 // https://stackoverflow.com/a/1489985/1711232
 #define PASTER(x, y) x##y

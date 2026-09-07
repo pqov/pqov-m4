@@ -1,9 +1,40 @@
 #include "gf256_madd.i"
 
+.macro te_ld_iii r
+  .if tw == 12
+  ldr.w \r, [sp, #2*4]
+  .else
+  vmov.w \r, iiif
+  .endif
+.endm
+.macro te_st_iii r
+  .if tw == 12
+  str.w \r, [sp, #2*4]
+  .else
+  vmov.w iiif, \r
+  .endif
+.endm
+.macro te_ld_jjj r
+  .if tw == 12
+  ldr.w \r, [sp, #3*4]
+  .else
+  vmov.w \r, jjjf
+  .endif
+.endm
+.macro te_st_jjj r
+  .if tw == 12
+  str.w \r, [sp, #3*4]
+  .else
+  vmov.w jjjf, \r
+  .endif
+.endm
+
 .macro gf256_trimat_eval dim, batch_size
   push {r4-r11, lr}
   vpush {s16-s31}
-  .if \batch_size != 44
+  .set tw, (\batch_size+3)/4
+  .set rem, \batch_size % 4
+  .if tw != 11 && tw != 12
      ERROR: batch_size not implemented yet
   .endif
 
@@ -24,7 +55,42 @@
 
   bb .req r2
 
-  // 44 elements
+  .if tw == 12
+  yf0 .req s0
+  yf1 .req s1
+  yf2 .req s2
+  yf3 .req s3
+  yf4 .req s4
+  yf5 .req s5
+  yf6 .req s6
+  yf7 .req s7
+  yf8 .req s8
+  yf9 .req s9
+  yf10 .req s10
+  yf11 .req s11
+
+  tf0 .req s12
+  tf1 .req s13
+  tf2 .req s14
+  tf3 .req s15
+  tf4 .req s16
+  tf5 .req s17
+  tf6 .req s18
+  tf7 .req s19
+  tf8 .req s20
+  tf9 .req s21
+  tf10 .req s22
+  tf11 .req s23
+
+  fbx0 .req s24
+  fbx1 .req s25
+  fbx2 .req s26
+  fbx3 .req s27
+  fbx4 .req s28
+  fbx5 .req s29
+  fbx6 .req s30
+  fbx7 .req s31
+  .else
   yf0 .req s0
   yf1 .req s1
   yf2 .req s2
@@ -60,9 +126,14 @@
 
   iiif .req s30
   jjjf .req s31
+  .endif
 
   // stack: y, x
+  .if tw == 12
+  sub.w sp, sp, #4*4
+  .else
   sub.w sp, sp, #2*4
+  .endif
   str.w r0, [sp, #0*4]
   str.w r2, [sp, #1*4]
 
@@ -79,6 +150,9 @@
   vmov.w yf8, r4
   vmov.w yf9, r4
   vmov.w yf10, r4
+  .if tw == 12
+  vmov.w yf11, r4
+  .endif
 
 
   // TODO: rename
@@ -86,7 +160,7 @@
   mov.w tmp10, #0x1b
 
   mov.w iii, #0
-  vmov.w iiif, iii
+  te_st_iii iii
   1:
     // set tmp to 0
     mov.w r4, #0
@@ -101,9 +175,12 @@
     vmov.w tf8, r4
     vmov.w tf9, r4
     vmov.w tf10, r4
+    .if tw == 12
+    vmov.w tf11, r4
+    .endif
 
     mov.w jjj, iii
-    vmov.w jjjf, jjj
+    te_st_jjj jjj
     2:
         ldr.w bb, [sp, #1*4]
         ldrb.w bb, [bb, jjj]
@@ -163,13 +240,28 @@
         vmov.w tf9, tmp5
         vmov.w tf10, tmp6
 
-    vmov.w jjj, jjjf
+        .if rem != 0
+        ldrb.w tmp0, [r1], #1
+        .if rem >= 2
+        ldrb.w tmp1, [r1], #1
+        orr.w tmp0, tmp0, tmp1, lsl#8
+        .endif
+        .if rem >= 3
+        ldrb.w tmp1, [r1], #1
+        orr.w tmp0, tmp0, tmp1, lsl#16
+        .endif
+        vmov.w tmp4, tf11
+        gf256_madd 1, tmp4, xxx, xxx, xxx, tmp0, xxx, xxx, xxx, fbx0, fbx1, fbx2, fbx3, fbx4, fbx5, fbx6, fbx7, tmp9, tmp11, bb
+        vmov.w tf11, tmp4
+        .endif
+
+    te_ld_jjj jjj
     add.w jjj, #1
-    vmov.w jjjf, jjj
+    te_st_jjj jjj
     cmp.w jjj, #\dim
     bne.w 2b
 
-  vmov.w iii, iiif
+  te_ld_iii iii
   ldr.w bb, [sp, #1*4]
   ldrb.w bb, [bb, iii]
 
@@ -225,9 +317,16 @@
   vmov.w yf9, tmp5
   vmov.w yf10, tmp6
 
-  vmov.w iii, iiif
+  .if rem != 0
+  vmov.w tmp0, tf11
+  vmov.w tmp4, yf11
+  gf256_madd 1, tmp4, xxx, xxx, xxx, tmp0, xxx, xxx, xxx, fbx0, fbx1, fbx2, fbx3, fbx4, fbx5, fbx6, fbx7, tmp9, tmp11, bb
+  vmov.w yf11, tmp4
+  .endif
+
+  te_ld_iii iii
   add.w iii, #1
-  vmov.w iiif, iii
+  te_st_iii iii
   cmp.w iii, #\dim
   bne.w 1b
 
@@ -244,8 +343,24 @@
   vstr.w yf8,  [r0, #8*4]
   vstr.w yf9,  [r0, #9*4]
   vstr.w yf10, [r0, #10*4]
+  .if rem != 0
+  vmov.w r4, yf11
+  strb.w r4, [r0, #11*4]
+  .if rem >= 2
+  lsr.w r5, r4, #8
+  strb.w r5, [r0, #11*4+1]
+  .endif
+  .if rem >= 3
+  lsr.w r5, r4, #16
+  strb.w r5, [r0, #11*4+2]
+  .endif
+  .endif
 
+  .if tw == 12
+  add.w sp, sp, #4*4
+  .else
   add.w sp, sp, #2*4
+  .endif
   vpop.w {s16-s31}
   pop.w {r4-r11, pc}
 .endm

@@ -1,8 +1,8 @@
 # UOV
 
 This repository contains a Cortex-M4 implementation of the UOV NIST submission. 
-It is compatible with the Round-2 version of the specification.
-It based on the implementation described in the paper **Oil and Vinegar: Modern Parameters and Implementations** available [here](https://eprint.iacr.org/2023/059), but testvectors have changed in Round-2.
+It is compatible with the Round-3 version of the specification.
+It based on the implementation described in the paper **Oil and Vinegar: Modern Parameters and Implementations** available [here](https://eprint.iacr.org/2023/059), but testvectors have changed since.
 
 This repository is based on [pqm4](https://github.com/mupq/pqm4) and you will find the usual `test.py`, `testvectors.py`, and `benchmarks.py` scripts.  
 Please follow the installation steps in pqm4. 
@@ -26,7 +26,7 @@ cd pqov-m4
 # run testvectors on the board
 ./testvectors.py -p nucleo-l4r5zi -u /dev/ttyACM0
 # run benchmarks on the board
-./benchmarks.py -p nucleo-l4r5zi -u /dev/ttyACM0 -i 10
+./benchmarks.py -p nucleo-l4r5zi -u /dev/ttyACM0 -i 1000
 # print benchmarks
 ./convert_benchmarks.py md
 ```
@@ -35,31 +35,31 @@ cd pqov-m4
 
 | scheme | implementation | key generation [cycles] | sign [cycles] | verify [cycles] |
 | ------ | -------------- | ----------------------- | ------------- | --------------- |
-| ov-Ip (1 executions) | m4f | AVG: 138,756,740 <br /> MIN: 138,756,740 <br /> MAX: 138,756,740 | AVG: 2,509,469 <br /> MIN: 2,509,469 <br /> MAX: 2,509,469 | AVG: 998,985 <br /> MIN: 998,985 <br /> MAX: 998,985 |
-| ov-Ip (1 executions) | ref | AVG: 350,354,485 <br /> MIN: 350,354,485 <br /> MAX: 350,354,485 | AVG: 6,678,636 <br /> MIN: 6,678,636 <br /> MAX: 6,678,636 | AVG: 1,303,273 <br /> MIN: 1,303,273 <br /> MAX: 1,303,273 |
-| ov-Ip-pkc (1 executions) | m4f | AVG: 174,978,241 <br /> MIN: 174,978,241 <br /> MAX: 174,978,241 | AVG: 2,533,591 <br /> MIN: 2,533,591 <br /> MAX: 2,533,591 | AVG: 11,552,193 <br /> MIN: 11,552,193 <br /> MAX: 11,552,193 |
-| ov-Ip-pkc (1 executions) | m4f-speed | AVG: 174,978,239 <br /> MIN: 174,978,239 <br /> MAX: 174,978,239 | AVG: 2,533,594 <br /> MIN: 2,533,594 <br /> MAX: 2,533,594 | AVG: 10,720,395 <br /> MIN: 10,720,395 <br /> MAX: 10,720,395 |
-| ov-Ip-pkc (1 executions) | ref | AVG: 374,689,539 <br /> MIN: 374,689,539 <br /> MAX: 374,689,539 | AVG: 7,146,608 <br /> MIN: 7,146,608 <br /> MAX: 7,146,608 | AVG: 10,947,347 <br /> MIN: 10,947,347 <br /> MAX: 10,947,347 |
-| ov-Ip-pkc-aes4 (1 executions) | m4f | AVG: 169,238,421 <br /> MIN: 169,238,421 <br /> MAX: 169,238,421 | AVG: 2,533,591 <br /> MIN: 2,533,591 <br /> MAX: 2,533,591 | AVG: 5,805,036 <br /> MIN: 5,805,036 <br /> MAX: 5,805,036 |
-| ov-Ip-pkc-aes4 (1 executions) | m4f-speed | AVG: 169,238,415 <br /> MIN: 169,238,415 <br /> MAX: 169,238,415 | AVG: 2,533,594 <br /> MIN: 2,533,594 <br /> MAX: 2,533,594 | AVG: 5,420,706 <br /> MIN: 5,420,706 <br /> MAX: 5,420,706 |
-| ov-Ip-pkc-aes4 (1 executions) | ref | AVG: 368,949,374 <br /> MIN: 368,949,374 <br /> MAX: 368,949,374 | AVG: 7,146,608 <br /> MIN: 7,146,608 <br /> MAX: 7,146,608 | AVG: 5,647,661 <br /> MIN: 5,647,661 <br /> MAX: 5,647,661 |
-| ov-Ip-pkc-skc (1 executions) | m4f | AVG: 174,978,323 <br /> MIN: 174,978,323 <br /> MAX: 174,978,323 | AVG: 88,802,467 <br /> MIN: 88,802,467 <br /> MAX: 88,802,467 | AVG: 11,542,031 <br /> MIN: 11,542,031 <br /> MAX: 11,542,031 |
-| ov-Ip-pkc-skc (1 executions) | m4f-speed | AVG: 174,978,325 <br /> MIN: 174,978,325 <br /> MAX: 174,978,325 | AVG: 91,261,472 <br /> MIN: 91,261,472 <br /> MAX: 91,261,472 | AVG: 11,434,554 <br /> MIN: 11,434,554 <br /> MAX: 11,434,554 |
-| ov-Ip-pkc-skc (1 executions) | ref | AVG: 374,689,608 <br /> MIN: 374,689,608 <br /> MAX: 374,689,608 | AVG: 241,303,267 <br /> MIN: 241,303,267 <br /> MAX: 241,303,267 | AVG: 11,649,615 <br /> MIN: 11,649,615 <br /> MAX: 11,649,615 |
-| ov-Ip-pkc-skc-aes4 (1 executions) | m4f | AVG: 169,238,495 <br /> MIN: 169,238,495 <br /> MAX: 169,238,495 | AVG: 83,062,341 <br /> MIN: 83,062,341 <br /> MAX: 83,062,341 | AVG: 5,787,334 <br /> MIN: 5,787,334 <br /> MAX: 5,787,334 |
-| ov-Ip-pkc-skc-aes4 (1 executions) | m4f-speed | AVG: 169,238,495 <br /> MIN: 169,238,495 <br /> MAX: 169,238,495 | AVG: 83,062,335 <br /> MIN: 83,062,335 <br /> MAX: 83,062,335 | AVG: 5,740,053 <br /> MIN: 5,740,053 <br /> MAX: 5,740,053 |
-| ov-Ip-pkc-skc-aes4 (1 executions) | ref | AVG: 368,949,458 <br /> MIN: 368,949,458 <br /> MAX: 368,949,458 | AVG: 235,563,153 <br /> MIN: 235,563,153 <br /> MAX: 235,563,153 | AVG: 5,909,504 <br /> MIN: 5,909,504 <br /> MAX: 5,909,504 |
-| ov-Is (1 executions) | m4f-flash | AVG: 398,085,875 <br /> MIN: 398,085,875 <br /> MAX: 398,085,875 | AVG: 2,299,219 <br /> MIN: 2,299,219 <br /> MAX: 2,299,219 | AVG: 657,017 <br /> MIN: 657,017 <br /> MAX: 657,017 |
-| ov-Is (1 executions) | ref-flash | AVG: 634,922,297 <br /> MIN: 634,922,297 <br /> MAX: 634,922,297 | AVG: 4,772,902 <br /> MIN: 4,772,902 <br /> MAX: 4,772,902 | AVG: 1,044,707 <br /> MIN: 1,044,707 <br /> MAX: 1,044,707 |
-| ov-Is-pkc (1 executions) | m4f-flash | AVG: 314,104,049 <br /> MIN: 314,104,049 <br /> MAX: 314,104,049 | AVG: 2,299,226 <br /> MIN: 2,299,226 <br /> MAX: 2,299,226 | AVG: 16,042,825 <br /> MIN: 16,042,825 <br /> MAX: 16,042,825 |
-| ov-Is-pkc (1 executions) | m4f-flash-speed | AVG: 314,104,043 <br /> MIN: 314,104,043 <br /> MAX: 314,104,043 | AVG: 2,299,219 <br /> MIN: 2,299,219 <br /> MAX: 2,299,219 | AVG: 15,459,859 <br /> MIN: 15,459,859 <br /> MAX: 15,459,859 |
-| ov-Is-pkc (1 executions) | ref-flash | AVG: 540,910,911 <br /> MIN: 540,910,911 <br /> MAX: 540,910,911 | AVG: 4,772,863 <br /> MIN: 4,772,863 <br /> MAX: 4,772,863 | AVG: 16,409,381 <br /> MIN: 16,409,381 <br /> MAX: 16,409,381 |
-| ov-Is-pkc-aes4 (1 executions) | m4f-flash | AVG: 305,658,328 <br /> MIN: 305,658,328 <br /> MAX: 305,658,328 | AVG: 2,299,222 <br /> MIN: 2,299,222 <br /> MAX: 2,299,222 | AVG: 7,583,263 <br /> MIN: 7,583,263 <br /> MAX: 7,583,263 |
-| ov-Is-pkc-aes4 (1 executions) | m4f-flash-speed | AVG: 305,658,331 <br /> MIN: 305,658,331 <br /> MAX: 305,658,331 | AVG: 2,299,224 <br /> MIN: 2,299,224 <br /> MAX: 2,299,224 | AVG: 7,418,434 <br /> MIN: 7,418,434 <br /> MAX: 7,418,434 |
-| ov-Is-pkc-aes4 (1 executions) | ref-flash | AVG: 532,465,090 <br /> MIN: 532,465,090 <br /> MAX: 532,465,090 | AVG: 4,772,913 <br /> MIN: 4,772,913 <br /> MAX: 4,772,913 | AVG: 8,009,254 <br /> MIN: 8,009,254 <br /> MAX: 8,009,254 |
-| ov-Is-pkc-skc (1 executions) | m4f-flash | AVG: 314,483,005 <br /> MIN: 314,483,005 <br /> MAX: 314,483,005 | AVG: 113,373,518 <br /> MIN: 113,373,518 <br /> MAX: 113,373,518 | AVG: 16,059,174 <br /> MIN: 16,059,174 <br /> MAX: 16,059,174 |
-| ov-Is-pkc-skc (1 executions) | m4f-flash-speed | AVG: 314,482,997 <br /> MIN: 314,482,997 <br /> MAX: 314,482,997 | AVG: 113,373,516 <br /> MIN: 113,373,516 <br /> MAX: 113,373,516 | AVG: 14,907,147 <br /> MIN: 14,907,147 <br /> MAX: 14,907,147 |
-| ov-Is-pkc-skc (1 executions) | ref-flash | AVG: 541,396,424 <br /> MIN: 541,396,424 <br /> MAX: 541,396,424 | AVG: 219,679,005 <br /> MIN: 219,679,005 <br /> MAX: 219,679,005 | AVG: 16,437,913 <br /> MIN: 16,437,913 <br /> MAX: 16,437,913 |
-| ov-Is-pkc-skc-aes4 (1 executions) | m4f-flash | AVG: 306,037,286 <br /> MIN: 306,037,286 <br /> MAX: 306,037,286 | AVG: 104,927,680 <br /> MIN: 104,927,680 <br /> MAX: 104,927,680 | AVG: 7,571,510 <br /> MIN: 7,571,510 <br /> MAX: 7,571,510 |
-| ov-Is-pkc-skc-aes4 (1 executions) | m4f-flash-speed | AVG: 306,037,280 <br /> MIN: 306,037,280 <br /> MAX: 306,037,280 | AVG: 104,927,684 <br /> MIN: 104,927,684 <br /> MAX: 104,927,684 | AVG: 7,157,320 <br /> MIN: 7,157,320 <br /> MAX: 7,157,320 |
-| ov-Is-pkc-skc-aes4 (1 executions) | ref-flash | AVG: 532,950,654 <br /> MIN: 532,950,654 <br /> MAX: 532,950,654 | AVG: 211,233,225 <br /> MIN: 211,233,225 <br /> MAX: 211,233,225 | AVG: 8,080,027 <br /> MIN: 8,080,027 <br /> MAX: 8,080,027 |
+| ov-Ip (1000 executions) | m4f | AVG: 178,017,933 <br /> MIN: 178,017,933 <br /> MAX: 178,017,933 | AVG: 3,049,645 <br /> MIN: 3,031,832 <br /> MAX: 5,999,579 | AVG: 1,433,039 <br /> MIN: 1,381,734 <br /> MAX: 1,438,779 |
+| ov-Ip (1000 executions) | ref | AVG: 404,281,293 <br /> MIN: 404,281,293 <br /> MAX: 404,281,293 | AVG: 7,030,355 <br /> MIN: 7,016,544 <br /> MAX: 13,915,088 | AVG: 1,882,101 <br /> MIN: 1,882,095 <br /> MAX: 1,882,136 |
+| ov-Ip-pkc (1000 executions) | m4f | AVG: 229,685,467 <br /> MIN: 229,685,467 <br /> MAX: 229,685,467 | AVG: 3,077,616 <br /> MIN: 3,068,605 <br /> MAX: 6,069,891 | AVG: 13,852,849 <br /> MIN: 13,799,377 <br /> MAX: 13,858,455 |
+| ov-Ip-pkc (1000 executions) | m4f-speed | AVG: 229,685,411 <br /> MIN: 229,685,411 <br /> MAX: 229,685,411 | AVG: 3,071,611 <br /> MIN: 3,068,603 <br /> MAX: 6,069,885 | AVG: 12,775,625 <br /> MIN: 12,721,636 <br /> MAX: 12,780,623 |
+| ov-Ip-pkc (1000 executions) | ref | AVG: 419,819,976 <br /> MIN: 419,819,976 <br /> MAX: 419,819,976 | AVG: 7,357,291 <br /> MIN: 7,328,467 <br /> MAX: 14,530,222 | AVG: 13,098,981 <br /> MIN: 13,098,957 <br /> MAX: 13,098,994 |
+| ov-Ip-pkc-aes4 (1000 executions) | m4f | AVG: 222,968,889 <br /> MIN: 222,968,889 <br /> MAX: 222,968,889 | AVG: 3,083,614 <br /> MIN: 3,068,601 <br /> MAX: 6,069,922 | AVG: 7,130,813 <br /> MIN: 7,083,507 <br /> MAX: 7,136,180 |
+| ov-Ip-pkc-aes4 (1000 executions) | m4f-speed | AVG: 222,968,943 <br /> MIN: 222,968,943 <br /> MAX: 222,968,943 | AVG: 3,077,616 <br /> MIN: 3,068,606 <br /> MAX: 6,069,932 | AVG: 6,576,061 <br /> MIN: 6,519,714 <br /> MAX: 6,581,355 |
+| ov-Ip-pkc-aes4 (1000 executions) | ref | AVG: 413,105,277 <br /> MIN: 413,105,277 <br /> MAX: 413,105,277 | AVG: 7,371,683 <br /> MIN: 7,328,455 <br /> MAX: 14,530,203 | AVG: 6,899,700 <br /> MIN: 6,899,686 <br /> MAX: 6,899,725 |
+| ov-Ip-pkc-skc (1000 executions) | m4f | AVG: 229,685,341 <br /> MIN: 229,685,341 <br /> MAX: 229,685,341 | AVG: 20,284,882 <br /> MIN: 20,269,801 <br /> MAX: 27,804,439 | AVG: 13,852,552 <br /> MIN: 13,796,635 <br /> MAX: 13,858,451 |
+| ov-Ip-pkc-skc (1000 executions) | m4f-speed | AVG: 229,685,334 <br /> MIN: 229,685,334 <br /> MAX: 229,685,334 | AVG: 20,299,824 <br /> MIN: 20,269,676 <br /> MAX: 27,804,176 | AVG: 13,686,538 <br /> MIN: 13,633,281 <br /> MAX: 13,691,799 |
+| ov-Ip-pkc-skc (1000 executions) | ref | AVG: 419,820,014 <br /> MIN: 419,820,014 <br /> MAX: 419,820,014 | AVG: 29,863,857 <br /> MIN: 29,795,819 <br /> MAX: 46,797,080 | AVG: 14,021,142 <br /> MIN: 14,021,108 <br /> MAX: 14,021,154 |
+| ov-Ip-pkc-skc-aes4 (1000 executions) | m4f | AVG: 222,968,792 <br /> MIN: 222,968,792 <br /> MAX: 222,968,792 | AVG: 13,562,637 <br /> MIN: 13,555,066 <br /> MAX: 21,089,491 | AVG: 7,129,723 <br /> MIN: 7,073,575 <br /> MAX: 7,136,177 |
+| ov-Ip-pkc-skc-aes4 (1000 executions) | m4f-speed | AVG: 222,968,821 <br /> MIN: 222,968,821 <br /> MAX: 222,968,821 | AVG: 13,570,348 <br /> MIN: 13,555,248 <br /> MAX: 21,089,861 | AVG: 6,971,768 <br /> MIN: 6,928,068 <br /> MAX: 6,977,349 |
+| ov-Ip-pkc-skc-aes4 (1000 executions) | ref | AVG: 413,105,504 <br /> MIN: 413,105,504 <br /> MAX: 413,105,504 | AVG: 23,166,412 <br /> MIN: 23,081,388 <br /> MAX: 40,082,706 | AVG: 7,306,674 <br /> MIN: 7,306,658 <br /> MAX: 7,306,701 |
+| ov-Is (1000 executions) | m4f-flash | AVG: 398,061,881 <br /> MIN: 398,061,881 <br /> MAX: 398,061,881 | AVG: 2,408,849 <br /> MIN: 2,293,873 <br /> MAX: 6,715,860 | AVG: 616,034 <br /> MIN: 536,294 <br /> MAX: 674,758 |
+| ov-Is (1000 executions) | ref-flash | AVG: 627,775,561 <br /> MIN: 627,775,561 <br /> MAX: 627,775,561 | AVG: 4,717,736 <br /> MIN: 4,399,562 <br /> MAX: 17,298,186 | AVG: 930,890 <br /> MIN: 793,543 <br /> MAX: 1,026,682 |
+| ov-Is-pkc (1000 executions) | m4f-flash | AVG: 314,105,243 <br /> MIN: 314,105,243 <br /> MAX: 314,105,243 | AVG: 2,444,227 <br /> MIN: 2,293,876 <br /> MAX: 6,715,868 | AVG: 16,043,364 <br /> MIN: 15,978,484 <br /> MAX: 16,075,451 |
+| ov-Is-pkc (1000 executions) | m4f-flash-speed | AVG: 314,105,249 <br /> MIN: 314,105,249 <br /> MAX: 314,105,249 | AVG: 2,419,900 <br /> MIN: 2,293,869 <br /> MAX: 6,715,808 | AVG: 15,162,478 <br /> MIN: 13,722,869 <br /> MAX: 16,164,642 |
+| ov-Is-pkc (1000 executions) | ref-flash | AVG: 533,468,259 <br /> MIN: 533,468,259 <br /> MAX: 533,468,259 | AVG: 4,713,437 <br /> MIN: 4,399,562 <br /> MAX: 12,998,627 | AVG: 16,470,545 <br /> MIN: 16,320,870 <br /> MAX: 16,571,383 |
+| ov-Is-pkc-aes4 (1000 executions) | m4f-flash | AVG: 305,659,504 <br /> MIN: 305,659,504 <br /> MAX: 305,659,504 | AVG: 2,466,338 <br /> MIN: 2,293,877 <br /> MAX: 8,926,796 | AVG: 7,592,743 <br /> MIN: 7,542,958 <br /> MAX: 7,624,755 |
+| ov-Is-pkc-aes4 (1000 executions) | m4f-flash-speed | AVG: 305,659,509 <br /> MIN: 305,659,509 <br /> MAX: 305,659,509 | AVG: 2,439,805 <br /> MIN: 2,293,874 <br /> MAX: 6,715,870 | AVG: 7,244,475 <br /> MIN: 6,421,172 <br /> MAX: 7,727,102 |
+| ov-Is-pkc-aes4 (1000 executions) | ref-flash | AVG: 525,022,501 <br /> MIN: 525,022,501 <br /> MAX: 525,022,501 | AVG: 4,704,846 <br /> MIN: 4,399,570 <br /> MAX: 12,998,641 | AVG: 8,024,321 <br /> MIN: 7,892,035 <br /> MAX: 8,115,243 |
+| ov-Is-pkc-skc (1000 executions) | m4f-flash | AVG: 314,483,932 <br /> MIN: 314,483,932 <br /> MAX: 314,483,932 | AVG: 21,435,229 <br /> MIN: 21,069,764 <br /> MAX: 36,959,008 | AVG: 16,043,343 <br /> MIN: 16,001,564 <br /> MAX: 16,077,074 |
+| ov-Is-pkc-skc (1000 executions) | m4f-flash-speed | AVG: 314,483,936 <br /> MIN: 314,483,936 <br /> MAX: 314,483,936 | AVG: 21,461,721 <br /> MIN: 21,069,773 <br /> MAX: 36,958,994 | AVG: 15,163,705 <br /> MIN: 13,631,128 <br /> MAX: 16,178,420 |
+| ov-Is-pkc-skc (1000 executions) | ref-flash | AVG: 533,953,678 <br /> MIN: 533,953,678 <br /> MAX: 533,953,678 | AVG: 27,135,799 <br /> MIN: 26,523,908 <br /> MAX: 47,992,925 | AVG: 16,471,741 <br /> MIN: 16,357,699 <br /> MAX: 16,550,967 |
+| ov-Is-pkc-skc-aes4 (1000 executions) | m4f-flash | AVG: 306,038,171 <br /> MIN: 306,038,171 <br /> MAX: 306,038,171 | AVG: 13,042,381 <br /> MIN: 12,623,936 <br /> MAX: 23,216,797 | AVG: 7,591,366 <br /> MIN: 7,543,134 <br /> MAX: 7,624,981 |
+| ov-Is-pkc-skc-aes4 (1000 executions) | m4f-flash-speed | AVG: 306,038,177 <br /> MIN: 306,038,177 <br /> MAX: 306,038,177 | AVG: 13,015,891 <br /> MIN: 12,623,929 <br /> MAX: 23,216,771 | AVG: 7,240,602 <br /> MIN: 6,370,144 <br /> MAX: 7,727,299 |
+| ov-Is-pkc-skc-aes4 (1000 executions) | ref-flash | AVG: 525,507,933 <br /> MIN: 525,507,933 <br /> MAX: 525,507,933 | AVG: 18,926,161 <br /> MIN: 18,078,129 <br /> MAX: 39,547,158 | AVG: 8,025,255 <br /> MIN: 7,918,795 <br /> MAX: 8,117,551 |

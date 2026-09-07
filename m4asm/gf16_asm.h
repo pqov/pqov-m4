@@ -5,6 +5,9 @@
 #include "utils_prng.h"
 
 extern const uint8_t gf16mul_lut[];
+// gf16v_madd.S
+void gf16v_madd_m4f(uint8_t *accu_c, const uint8_t *a, uint8_t gf16_b, unsigned num_byte);
+
 // gf16mat_prod.S
 void gf16mat_prod_m4f_2048_96_normal_normal(uint8_t *c, const uint8_t *matA, const uint8_t *b);
 void gf16mat_prod_m4f_48_64_normal_normal(uint8_t *c, const uint8_t *matA, const uint8_t *b);

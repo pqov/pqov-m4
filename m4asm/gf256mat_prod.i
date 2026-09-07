@@ -34,6 +34,88 @@
   vmov.w \f7, \tmp
 .endm
 
+.macro ldr_tail dst, ptr, off, nbytes, tmp
+  .if \nbytes == 4
+  ldr.w \dst, [\ptr, #\off]
+  .else
+  ldrb.w \dst, [\ptr, #\off]
+  .if \nbytes >= 2
+  ldrb.w \tmp, [\ptr, #(\off+1)]
+  orr.w \dst, \dst, \tmp, lsl#8
+  .endif
+  .if \nbytes >= 3
+  ldrb.w \tmp, [\ptr, #(\off+2)]
+  orr.w \dst, \dst, \tmp, lsl#16
+  .endif
+  .endif
+.endm
+
+.macro str_tail src, ptr, nbytes, tmp
+  .if \nbytes == 4
+  str.w \src, [\ptr], #4
+  .else
+  strb.w \src, [\ptr], #1
+  .if \nbytes >= 2
+  lsr.w \tmp, \src, #8
+  strb.w \tmp, [\ptr], #1
+  .endif
+  .if \nbytes >= 3
+  lsr.w \tmp, \src, #16
+  strb.w \tmp, [\ptr], #1
+  .endif
+  .endif
+.endm
+
+.macro ld_tailwords ptr, nw, lastb, tmp
+  .if \nw == 1
+  ldr_tail r4, \ptr, 0, \lastb, \tmp
+  .else
+  ldr.w r4, [\ptr]
+  .endif
+  .if \nw >= 2
+  .if \nw == 2
+  ldr_tail r5, \ptr, 4, \lastb, \tmp
+  .else
+  ldr.w r5, [\ptr, #4]
+  .endif
+  .endif
+  .if \nw >= 3
+  .if \nw == 3
+  ldr_tail r6, \ptr, 8, \lastb, \tmp
+  .else
+  ldr.w r6, [\ptr, #8]
+  .endif
+  .endif
+  .if \nw >= 4
+  ldr_tail r2, \ptr, 12, \lastb, \tmp
+  .endif
+.endm
+
+.macro st_tailwords ptr, nw, lastb, tmp
+  .if \nw == 1
+  str_tail r8, \ptr, \lastb, \tmp
+  .else
+  str.w r8, [\ptr], #4
+  .endif
+  .if \nw >= 2
+  .if \nw == 2
+  str_tail r9, \ptr, \lastb, \tmp
+  .else
+  str.w r9, [\ptr], #4
+  .endif
+  .endif
+  .if \nw >= 3
+  .if \nw == 3
+  str_tail r10, \ptr, \lastb, \tmp
+  .else
+  str.w r10, [\ptr], #4
+  .endif
+  .endif
+  .if \nw >= 4
+  str_tail r11, \ptr, \lastb, \tmp
+  .endif
+.endm
+
 .macro gf256_mat_prod_x n_A_vec_byte
   push {r4-r11, lr}
   vpush {s16-s23}
@@ -156,6 +238,7 @@
 
         add.w aptr, #\n_A_vec_byte
         shift_fpu fbx0, fbx1, fbx2, fbx3, fbx4, fbx5, fbx6, fbx7, tmp2
+        mov.w r14, #0x1b
 
 
         vmov.w r4, ctrf1
@@ -233,8 +316,11 @@
     bne.w 1b
 
     .if \n_A_vec_byte % 32 != 0
-    .if \n_A_vec_byte % 4 == 0
-    .set num_words, (\n_A_vec_byte % 32)/4
+    .set num_words, ((\n_A_vec_byte % 32)+3)/4
+    .set lastb, 4
+    .if (\n_A_vec_byte % 4) != 0
+    .set lastb, \n_A_vec_byte % 4
+    .endif
     .if num_words > 4
         ERROR (not implemented yet)
     .endif
@@ -273,16 +359,7 @@
         4:
         vmov.w ctrf1, r4
 
-        ldr.w r4, [aptr]
-        .if num_words >= 2
-        ldr.w r5, [aptr, #4]
-        .endif
-        .if num_words >= 3
-        ldr.w r6, [aptr, #8]
-        .endif
-        .if num_words >= 4
-        ldr.w r2, [aptr, #12]
-        .endif
+        ld_tailwords aptr, num_words, lastb, tmp2
         add.w aptr, #\n_A_vec_byte
         gf256_madd_x4 num_words, 0, r8, r9, r10, r11, r4, r5, r6, r2, fbx0, fbx1, fbx2, fbx3, fbx4, fbx5, fbx6, fbx7, r7, tmp2, tmp4
 
@@ -302,16 +379,7 @@
         vmov.w ctrf1, r4
         .set k, 0
         .rept 4
-        ldr.w r4, [aptr]
-        .if num_words >= 2
-        ldr.w r5, [aptr, #4]
-        .endif
-        .if num_words >= 3
-        ldr.w r6, [aptr, #8]
-        .endif
-        .if num_words >= 4
-        ldr.w r2, [aptr, #12]
-        .endif
+        ld_tailwords aptr, num_words, lastb, tmp2
         add.w aptr, #\n_A_vec_byte
         gf256_madd_x4 num_words, k, r8, r9, r10, r11, r4, r5, r6, r2, fbx0, fbx1, fbx2, fbx3, fbx4, fbx5, fbx6, fbx7, r7, tmp2, tmp4
         .set k,k+1
@@ -327,19 +395,7 @@
     5:
 
     vmov.w cptr, c_ptr_f
-    str.w r8, [cptr], #4
-    .if num_words >= 2
-    str.w r9, [cptr], #4
-    .endif
-    .if num_words >= 3
-    str.w r10, [cptr], #4
-    .endif
-    .if num_words >= 4
-    str.w r11, [cptr], #4
-    .endif
-    .else
-    ERROR
-    .endif
+    st_tailwords cptr, num_words, lastb, tmp2
     .endif
 
   vpop {s16-s23}
