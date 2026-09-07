@@ -14,6 +14,9 @@
 
 #define NDEBUG
 
+// pqm4 compiles with -fno-builtin, which would leave these as calls.
+#define PQOV_MEMCPY __builtin_memcpy
+
 //#define _UTILS_SUPERCOP_   // XXX: un-supported now
 #define _UTILS_PQM4_
 

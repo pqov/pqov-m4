@@ -13,7 +13,7 @@
 #include "hal-flash.h"
 #endif
 
-#define MAXMLEN 2048
+#define MAXMLEN MUPQ_MAXMLEN
 
 // https://stackoverflow.com/a/1489985/1711232
 #define PASTER(x, y) x##y
@@ -39,14 +39,23 @@
 
 typedef uint32_t uint32;
 
+#define PRINTBYTES_CHUNK 64
+
 static void printbytes(const unsigned char *x, unsigned long long xlen)
 {
-  char outs[2*xlen+1];
-  unsigned long long i;
-  for(i=0;i<xlen;i++)
-    sprintf(outs+2*i, "%02x", x[i]);
-  outs[2*xlen] = 0;
-  hal_send_str(outs);
+  // A VLA of 2*xlen+1 does not fit for keys of a few hundred kB, so emit the
+  // hex in fixed-size pieces.  hal_send_chunk() does not terminate the line,
+  // so the output is byte-identical to a single hal_send_str().
+  char outs[2*PRINTBYTES_CHUNK+1];
+  unsigned long long i, j;
+  for(i=0;i<xlen;i+=PRINTBYTES_CHUNK) {
+    unsigned long long n = (xlen-i < PRINTBYTES_CHUNK) ? xlen-i : PRINTBYTES_CHUNK;
+    for(j=0;j<n;j++)
+      sprintf(outs+2*j, "%02x", x[i+j]);
+    outs[2*n] = 0;
+    hal_send_chunk(outs);
+  }
+  hal_send_str("");
 }
 
 static uint32 seed[32] = { 3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5 } ;

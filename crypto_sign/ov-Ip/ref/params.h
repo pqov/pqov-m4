@@ -1,1 +1,23 @@
-../../../pqov/src/params.h
+// SPDX-License-Identifier: CC0 OR Apache-2.0
+#ifndef _PARAMS_PQM4_H_
+#define _PARAMS_PQM4_H_
+
+/// Parameter selection for this pqm4 scheme directory.  Everything else is
+/// taken from the pqov submodule, so this file does not drift when it moves.
+#define _OV256_119_45
+#define _OV_CLASSIC
+
+#include "../../../pqov/src/params.h"
+
+/// pqm4 keeps the pqov symbol namespacing switched off: the hand-written
+/// Cortex-M4 assembly under m4asm/ calls symbols such as prng_gen_publicinputs
+/// by their un-namespaced names.  Each implementation is linked into its own
+/// binary here, so there is nothing to disambiguate.
+#if (_PUB_N != 119) || (_PUB_M != 45)
+#error "pqov selected a different parameter set than this directory expects"
+#endif
+
+#undef  PQOV_NAMESPACE
+#define PQOV_NAMESPACE(s) s
+
+#endif  // _PARAMS_PQM4_H_

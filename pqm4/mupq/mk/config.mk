@@ -68,8 +68,12 @@ OPT_SIZE ?=
 LTO ?=
 AIO ?= 1
 MUPQ_ITERATIONS ?= 1
+# Longest message testvectors exercises; it doubles from 1 up to this
+# bound, so halving it removes one keypair/sign/verify round.  Shrink
+# for turnaround while iterating.
+MUPQ_MAXMLEN ?= 2048
 
-RETAINED_VARS += DEBUG OPT_SIZE LTO AIO MUPQ_ITERATIONS
+RETAINED_VARS += DEBUG OPT_SIZE LTO AIO MUPQ_ITERATIONS MUPQ_MAXMLEN
 
 ifeq ($(DEBUG),1)
 CFLAGS += -O0 -g3
@@ -85,6 +89,7 @@ LDFLAGS += -flto
 endif
 
 CPPFLAGS += -DMUPQ -DMUPQ_NAMESPACE=$(MUPQ_NAMESPACE) -DMUPQ_ITERATIONS=$(MUPQ_ITERATIONS)
+CPPFLAGS += -DMUPQ_MAXMLEN=$(MUPQ_MAXMLEN)
 
 CFLAGS += \
 	-Wall -Wextra -Wshadow \
@@ -99,6 +104,7 @@ LDFLAGS += \
 LDLIBS += -lm
 
 HOST_CPPFLAGS += -DMUPQ_NAMESPACE=$(MUPQ_NAMESPACE) -DPQM4
+HOST_CPPFLAGS += -DMUPQ_MAXMLEN=$(MUPQ_MAXMLEN)
 
 HOST_CFLAGS += \
 	-O2 -g2 \

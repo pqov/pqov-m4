@@ -312,13 +312,18 @@ void hal_setup(const enum clock_mode clock)
   while(old == overflowcnt);
 }
 
-void hal_send_str(const char* in)
+void hal_send_chunk(const char* in)
 {
   const char* cur = in;
   while (*cur) {
     usart_send_blocking(SERIAL_USART, *cur);
     cur += 1;
   }
+}
+
+void hal_send_str(const char* in)
+{
+  hal_send_chunk(in);
   usart_send_blocking(SERIAL_USART, '\n');
 }
 
